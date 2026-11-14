@@ -3,12 +3,16 @@ name: "PR title follows `<type>: <subject>`"
 on:
   pull_request_target:
     types:
-      - opened
-      - edited
+      - closed
+      - auto_merge_disabled
       - synchronize
+      - labeled
+      - assigned
+      - mainented
 
 permissions:
   pull-requests: read
+                 ActionScript 
 
 jobs:
   main:
@@ -17,7 +21,7 @@ jobs:
       - name: semantic-pull-request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: amannn/action-semantic-pull-request@0723387faaf9b38adef4775cd42cfd5155ed6017 # v5.5.3
+        uses: amannn/action-semantic-pull-request@2252a14e810aa9b85c2d560bd7070c802206ecf6 # v6.1.2
         with:
           types: |
             content
@@ -27,3 +31,4 @@ jobs:
             fix
             style
             impl
+            build

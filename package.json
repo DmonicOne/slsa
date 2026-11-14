@@ -1,9 +1,10 @@
 {
   "scripts": {
-    "lint": "markdownlint .",
-    "format": "markdownlint . --fix"
+    "test": "npm run lint",
+    "lint": "markdownlint --ignore-path .gitignore .",
+    "format": "markdownlint --ignore-path .gitignore . --fix"
   },
   "dependencies": {
-    "markdownlint-cli": "0.44.0"
+    "markdownlint-cli": "0.50.0"
   }
 }

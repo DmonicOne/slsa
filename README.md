@@ -1,6 +1,6 @@
 # SLSA ("salsa") is Supply-chain Levels for Software Artifacts
 
-<img align="right" src="https://github.com/slsa-framework/slsa/blob/main/docs/images/slsa-dancing-goose-logo.svg" alt="The OpenSSF mascot, a goose in armor, strikes a pose wearing a red salsa dress">
+<img align="right" src="https://github.com/slsa-framework/slsa/blob/main/www/images/slsa-dancing-goose-logo.svg" alt="The OpenSSF mascot, a goose in armor, strikes a pose wearing a red salsa dress">
 
 SLSA (pronounced ["salsa"](https://www.google.com/search?q=how+to+pronounce+salsa)) is a security framework from source to service, giving anyone working with software a common language for increasing levels of software security and supply chain integrity. It’s how you get from safe enough to being as resilient as possible, at any link in the chain.
 
@@ -10,9 +10,14 @@ See https://slsa.dev to learn about SLSA.
 
 ## What's in this repo?
 
-The primary content of this repo is the [docs/](docs/) directory, which contains
-the core SLSA specification and sources to the [slsa.dev] website. See the
-README.md in that directory for instructions on how to build the site.
+The primary content of this repo is the [spec/](spec/) directory which contains
+the core SLSA specification and the [www/](www/) directory which contains the
+sources of the [slsa.dev] website. See the README.md in that directory for instructions
+on how to build the site.
+
+The `spec/` folder on the main branch contains the current Draft specification.
+The released versions of the spec are found in the same folder but on the corresponding
+release branch (i.e., `releases/v1.0`, `releases/v1.2`, etc.)
 
 This repository also hosts SLSA's main [issue tracker], covering the website,
 specification, and overall project management. Other git repositories within the
@@ -27,20 +32,20 @@ See https://slsa.dev/community for ways to get involved in SLSA development.
 
 | Workstream | [Shepherd]
 | ---------- | ----------
-| [Build Level 4] | David A Wheeler (@david-a-wheeler)
+| [Build Level 4] | Andrew McNamara (@arewm)
 | [Attested Build Environments Track] | Marcela Melara (@marcelamelara), Pavel Iakovenko (@paveliak)
-| [Source Track] | Tom Hennen (@TomHennen)
-| [Version 1.1 release] | Arnaud J Le Hors (@lehors)
+| [Dependency Ingestion Track] | Mike Lieberman (@mlieberman85)
+| [SLSA Tooling Modernization] | Adolfo García Veytia (@puerco)
 
 [Shepherd]: CONTRIBUTING.md#workstream-lifecycle
 [Build Level 4]: https://github.com/slsa-framework/slsa/issues/977
 [Attested Build Environments Track]: https://github.com/slsa-framework/slsa/labels/build-environment-track
-[Source Track]: https://github.com/slsa-framework/slsa/issues/956
-[Version 1.1 release]: https://github.com/slsa-framework/slsa/issues/900
+[Dependency Ingestion Track]: https://github.com/slsa-framework/slsa/pull/1627
+[SLSA Tooling Modernization]: https://github.com/ossf/tac/issues/537
 
 ## URL Aliases
 
-We have several [redirect](docs/_redirects) configured on slsa.dev for
+We have several [redirects](www/_redirects) configured on slsa.dev for
 convenience of the team:
 
 -   https://slsa.dev/gh &rArr; SLSA GitHub repo

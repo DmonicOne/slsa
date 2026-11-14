@@ -50,6 +50,61 @@ changes:
 
 All changes require peer review through GitHub's pull request (PR) feature.
 
+### Using the DevContainer
+
+The SLSA project provides a [DevContainer](https://code.visualstudio.com/docs/remote/devcontainerjson-reference) configuration to simplify the development setup. This allows contributors to work in a consistent environment without needing to manually install dependencies or configure their local machines.
+
+#### GitHub Codespaces
+
+[GitHub Codespaces](https://github.com/features/codespaces) offers an easy way to get started with SLSA development:
+
+1.  Navigate to the [SLSA GitHub repository](https://github.com/slsa-framework/slsa)
+2.  Click the "Code" button
+3.  Select the "Codespaces" tab
+4.  Click "Create codespace on main"
+
+This will launch a browser-based VS Code environment with all the necessary tools pre-installed. **The initial setup may take a few minutes as the container is built.**
+
+#### VS Code with DevContainers
+
+If you prefer to work locally, you can use VS Code with the DevContainers extension:
+
+1.  Install [Docker](https://www.docker.com/products/docker-desktop/) on your system
+2.  Install [Visual Studio Code](https://code.visualstudio.com/)
+3.  Install the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+4.  Clone the SLSA repository
+5.  Open the cloned repository in VS Code
+6.  When prompted, click "Reopen in Container" or use the command palette (F1) and select "Dev Containers: Reopen in Container"
+
+VS Code will build the container and configure the development environment automatically. **The initial setup may take a few minutes as the container is built.**
+
+Once done, you can open a Terminal and launch the development server in the DevContainer with the following command:
+
+```shell
+cd www
+../tools/combine-versions.sh
+bundle exec jekyll serve
+netlify dev -c 'bundle exec jekyll serve --livereload --incremental'
+```
+
+### Deploying the site locally
+
+For detailed instructions on building and testing the site locally, see [www/README.md](www/README.md#building-and-testing-locally).
+
+Quick start (from the repository root):
+
+```shell
+cd www
+../tools/combine-versions.sh
+netlify dev
+```
+
+Then browse to http://localhost:8888 to view the site locally.
+
+### Deploying the site in production
+
+For detailed instructions on deploying the site in production, see [www/README.md](www/README.md#production).
+
 ### Markdown style
 
 Changes to any of the Markdown files in the repository should meet our Markdown
@@ -58,25 +113,26 @@ addition we prefer to keep our Markdown documents wrapped at 80 columns (though
 this is not currently enforced).
 
 To check (and fix) style problems before sending a PR you can run linting
-locally with `npm run lint && ./lint.sh` or `npm run format && ./lint.sh`.
+locally.
+
+#### Setup npm (if you haven't already)
 
 ```shell
-$ npm run lint && ./lint.sh
-
-> lint
-> markdownlint .
-
-CONTRIBUTING.md:77 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "### Pull request conventions"]
-$ npm run format && ./lint.sh
-
-> format
-> markdownlint . --fix
-
-$
+sudo apt install npm # or something similar for your system
+npm install # or `npm ci --ignore-scripts` for a clean install
 ```
 
-If you haven't already you'll need to install npm (e.g. `sudo apt install npm`)
-and package dependencies (`npm install`).
+#### Run the linter
+
+```shell
+npm run lint --silent && ./tools/lint.sh
+```
+
+#### Autofix the errors
+
+```shell
+npm run format && ./tools/lint.sh
+```
 
 ### Pull request conventions
 
@@ -121,7 +177,7 @@ maintainer will update if needed. See [review and approval] for the meaning of
 "waiting period" and "# approvers".
 
 | Type | Meaning | Waiting period | # Approvers
-|---|---|---|---
+| --- | --- | --- | ---
 | `content` | A change to the meaning of the specification. Must include a [changelog entry]. | 72h | 3
 | `editorial` | A clarification to the specification that does not change its meaning, beyond a simple `fix`. | 24h | 2
 | `nonspec` | A change to a non-specification, non-blog page, beyond a simple `fix`. | 24h | 2
@@ -136,7 +192,7 @@ approvers for their own PRs. For example, if the author of a PR with the
 two additional approvers before merging. However, a PR with the `impl` type
 always requires one reviewer, even if the author has write access.
 
-Note 2: If the PR only touches files in the [Draft](docs/spec-stages.md)
+Note 2: If the PR only touches files in the [Draft](www/spec-stages.md)
 specification stage, then the "waiting period" and "# reviewers" are relaxed and
 up to Maintainer discretion (including the PR author if they're a maintainer). Note
 that a relaxed number of reviewers and waiting period may result in more back
@@ -178,8 +234,7 @@ Review process:
 
 3.  Wait an appropriate amount of time to allow for lazy consensus. Different
     types have different minimum waiting periods. The waiting period begins at
-    the timestamp of either the final required approval or the latest non-author
-    comment, whichever is later.
+    the timestamp of the last substantial change to the PR.
     -   If a few days have passed without any feedback please feel free to ping
     the PR and [in Slack](https://openssf.slack.com/archives/C03NUSAPKC6).
 
@@ -248,34 +303,32 @@ in your git config.
 
 ## SLSA versions management
 
-The main working draft is located in the `spec/draft` folder while the various versions are in specific folders:
+The main working draft is located in the `spec` folder with the various versions in branches a la "releases/v0.1", "releases/v1.0", etc.
+
+`spec` is where all new work should take place. To publish a new version of the SLSA specification, create a new branch (e.g., `releases/v1.1`) and make the necessary changes to the spec folder on that branch: it is possible for instance that not all that is in the draft should be included in which case you will need to remove that content, and several config and navigation files need to be updated such as:
 
 ```none
-spec/draft
-spec/v0.1
-spec/v0.2
-spec/v1.0
-spec/v1.0-rc1
-spec/v1.0-rc2
-spec/v1.1
+www/_data/nav/config.yml
+www/_data/nav/v1.1.yml (corresponding to the version you are creating)
+www/_data/versions.yml
+www/_redirects
 ```
 
-`spec/draft` is where all new work should take place. To publish a new version of the SLSA specification, copy the draft folder to a version specific folder (e.g., `spec/v1.1`) and make the necessary changes to that folder: it is possible for instance that not all that is in the draft should be included in which case you will need to remove that content, and several config and navigation files need to be updated such as:
+To patch a specific version of the specification, the changes should be made to both the corresponding branch as well as, if applicable, all the later versions and the draft on the main branch.
 
-```none
-_data/nav/config.yml
-_data/nav/v1.1.yml (corresponding to the version you are creating)
-_data/versions.yml
-_redirects
-```
+To compare the changes between two versions you may find it handy to use the [diff site script](https://github.com/slsa-framework/slsa/tree/main/www#comparing-built-versions).
 
-To patch a specific version of the specification, the changes should be made to both the corresponding folder as well as, if applicable, to all later versions including the draft folder.
+**Note**: When publishing new versions of the SLSA specification, make sure to follow the [Specification stages and versions documentation](www/spec-stages.md) and the [Specification Development Process](https://github.com/slsa-framework/governance/blob/main/5._Governance.md#4-specification-development-process) to ensure compliance with the [Community Specification License](https://github.com/slsa-framework/governance/blob/main/1._Community_Specification_License-v1.md).
 
-Unfortunately we've not figured out a better way to handle the different versions with Jekyll. If you do, please let us know!
+## Netlify and Jekylll
 
-To compare the changes between two versions you may find it handy to use the [diff site script](https://github.com/slsa-framework/slsa/tree/main/docs#comparing-built-versions).
+The website https://slsa.dev is built with Jekyll and served by Netlify where we have an account managed by the Steering Committee. Netlify is setup to monitor the GitHub repository and automatically deploy updates when a PR is merged on main.
 
-**Note**: When publishing new versions of the SLSA specification, make sure to follow the [Specification stages and versions documentation](docs/spec-stages.md) and the [Specification Development Process](https://github.com/slsa-framework/governance/blob/main/5._Governance.md#4-specification-development-process) to ensure compliance with the [Community Specification License](https://github.com/slsa-framework/governance/blob/main/1._Community_Specification_License-v1.md).
+The netlify configuration is in the `/netlify.toml` file. This file overrides settings defined on the Netlify admin control panel where we need to say little more than which repository and branch to monitor.
+
+At deployment time, the website is built in several steps. First, we take all the different versions of the spec from the branches and copy them into corresponding `www/spec/<version>` folders. Then, the jekyll build is run to generate the website files in `www/_site` which is then deployed by netlify.
+
+For more information see the [www/README.md](www/README.md) file.
 
 ## Workstream lifecycle
 
